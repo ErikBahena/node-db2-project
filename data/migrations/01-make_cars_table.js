@@ -6,8 +6,8 @@ exports.up = async function (knex) {
     table.string("make", 40).notNullable();
     table.string("model", 40).notNullable();
     table.integer("mileage").notNullable();
-    table.string("title", 40);
-    table.string("transmission", 40);
+    table.string("title", 40).defaultTo(null);
+    table.string("transmission", 40).defaultTo(null);
   });
 };
 

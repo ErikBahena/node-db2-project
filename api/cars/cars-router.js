@@ -6,25 +6,36 @@ const router = express.Router();
 const CarsModel = require("./cars-model");
 
 // middleware
-const { checkCarId } = require("./cars-middleware");
+const {
+  checkCarId,
+  checkVinNumberUnique,
+  checkVinNumberValid,
+  checkCarPayload,
+} = require("./cars-middleware");
 
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
   CarsModel.getAll()
     .then((cars) => res.status(200).json(cars))
     .catch((err) => next(err));
 });
 
-router.get("/:id", checkCarId, (req, res) => {
+router.get("/:id", checkCarId, (req, res, next) => {
   CarsModel.getById(req.params.id)
     .then((car) => res.status(200).json(car))
     .catch((err) => next(err));
 });
 
-router.post("/", (req, res) => {
-  CarsModel.create(req.body)
-    .then((newCar) => res.status(201).json(newCar))
-    .catch((err) => next(err));
-});
+router.post(
+  "/",
+  checkCarPayload,
+  checkVinNumberValid,
+  checkVinNumberUnique,
+  (req, res, next) => {
+    CarsModel.create(req.body)
+      .then((newCar) => res.status(201).json(newCar))
+      .catch((err) => next(err));
+  }
+);
 
 router.use((err, req, res, next) => {
   res
